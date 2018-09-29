@@ -1,5 +1,5 @@
 {
-  "name": "jsonresume-cli",
+  "name": "@ianprime0509/jsonresume-cli",
   "version": "0.1.0",
   "description": "A CLI for creating and formatting JSON resumes.",
   "main": "dist/index.js",
