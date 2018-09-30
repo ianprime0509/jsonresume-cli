@@ -19,7 +19,7 @@ yargs
   })
   .command({
     command: 'export [file]',
-    describe: 'Export a resume.',
+    describe: 'Export a formatted resume.',
     builder: args =>
       args
         .option('theme', {

@@ -1,5 +1,5 @@
 /**
- * @file the format subcommand
+ * @file the export subcommand
  * @author Ian Johnson <ianprime0509@gmail.com>
  * @copyright 2018 Ian Johnson
  * @license MIT
@@ -27,7 +27,7 @@ interface Theme {
 }
 
 /**
- * Executes the format subcommand.
+ * Executes the export subcommand.
  *
  * @param args command-line options for the subcommand
  */
