@@ -4,25 +4,40 @@
  * @copyright 2018 Ian Johnson
  * @license MIT
  */
-import * as process from 'process';
-
-import program from 'commander';
+import yargs from 'yargs';
 
 import execFormat from './format';
 import execNew from './new';
+import execValidate from './validate';
 
-program.version('0.1.0');
-
-program
-  .command('new')
-  .description('create a new resume')
-  .option('-o, --output <file>', 'set the output file', '-')
-  .action(execNew);
-
-program
-  .command('format [file]')
-  .description('format a resume')
-  .option('-t, --theme <theme>', 'set the theme to use')
-  .action(execFormat);
-
-program.parse(process.argv);
+yargs
+  .version('0.1.0')
+  .command({
+    command: 'new',
+    describe: 'Create a new resume.',
+    builder: args =>
+      args.option('output', {
+        alias: 'o',
+        describe: 'Set the output file',
+        requiresArg: true,
+        type: 'string',
+      }),
+    handler: execNew,
+  })
+  .command({
+    command: 'format [file]',
+    describe: 'Format a resume.',
+    builder: args =>
+      args.option('theme', {
+        alias: 't',
+        describe: 'Set the theme to use',
+        requiresArg: true,
+        type: 'string',
+      }),
+    handler: execFormat,
+  })
+  .command({
+    command: 'validate [file]',
+    describe: 'Validate a resume.',
+    handler: execValidate,
+  }).argv;

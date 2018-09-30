@@ -4,11 +4,13 @@
  * @copyright 2018 Ian Johnson
  * @license MIT
  */
+import { Arguments } from 'yargs';
 
-interface Options {
-  output: string;
-}
-
-export default function(options: Options) {
-  console.log(`Output to ${options.output}`);
+/**
+ * Executes the new subcommand.
+ *
+ * @param args command-line options for the subcommand
+ */
+export default async function exec(args: Arguments) {
+  console.log(`Output to ${args.output}`);
 }
