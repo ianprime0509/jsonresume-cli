@@ -5,12 +5,9 @@
  * @license MIT
  */
 import { isValid } from '@ianprime0509/jsonresume-schema';
-import { readFile } from 'fs';
-import { exit } from 'process';
-import { promisify } from 'util';
 import { Arguments } from 'yargs';
 
-const readFileAsync = promisify(readFile);
+import { readFile } from './util';
 
 /**
  * Executes the validate subcommand.
@@ -19,17 +16,10 @@ const readFileAsync = promisify(readFile);
  */
 export default async function exec(args: Arguments) {
   const inputFile = args.file || '-';
-  // Read from stdin (file descriptor 0) if the file is '-'.
-  const resume = JSON.parse(
-    await readFileAsync(inputFile === '-' ? 0 : inputFile, {
-      encoding: 'UTF-8',
-    }),
-  );
+  const resume = JSON.parse(await readFile(inputFile));
 
-  if (isValid(resume)) {
-    exit(0);
-  } else {
+  if (!isValid(resume)) {
     // TODO: output validation errors.
-    exit(1);
+    process.exitCode = 1;
   }
 }

@@ -5,12 +5,9 @@
  * @license MIT
  */
 import { isValid, JSONResume } from '@ianprime0509/jsonresume-schema';
-import { readFile, writeFile } from 'fs';
-import { promisify } from 'util';
 import { Arguments } from 'yargs';
 
-const readFileAsync = promisify(readFile);
-const writeFileAsync = promisify(writeFile);
+import { readFile, writeFile } from './util';
 
 /**
  * A theme for a JSON Resume.
@@ -26,18 +23,12 @@ interface Theme {
  */
 export default async function exec(args: Arguments) {
   const inputFile = args.file || '-';
-  // Read from stdin (file descriptor 0) if the file is '-'.
-  const resume = JSON.parse(
-    await readFileAsync(inputFile === '-' ? 0 : inputFile, {
-      encoding: 'UTF-8',
-    }),
-  );
+  const resume = JSON.parse(await readFile(inputFile));
 
   if (isValid(resume)) {
     const rendered = await render(resume, args.theme || 'basic');
     const outputFile = args.output || '-';
-    // Write to stdout (file descriptor 1) if the file is '-'.
-    return writeFileAsync(outputFile === '-' ? 1 : outputFile, rendered);
+    return writeFile(outputFile, rendered);
   }
 }
 
