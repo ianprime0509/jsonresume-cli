@@ -12,5 +12,6 @@ import { Arguments } from 'yargs';
  * @param args command-line options for the subcommand
  */
 export default async function exec(args: Arguments) {
-  console.log(`Output to ${args.output}`);
+  const file = args.file || '-';
+  console.log(`Output to ${file}`);
 }

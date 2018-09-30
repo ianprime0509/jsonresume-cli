@@ -6,27 +6,20 @@
  */
 import yargs from 'yargs';
 
-import execFormat from './format';
+import execExport from './export';
 import execNew from './new';
 import execValidate from './validate';
 
 yargs
   .version('0.1.0')
   .command({
-    command: 'new',
+    command: 'new [file]',
     describe: 'Create a new resume.',
-    builder: args =>
-      args.option('output', {
-        alias: 'o',
-        describe: 'Set the output file',
-        requiresArg: true,
-        type: 'string',
-      }),
     handler: execNew,
   })
   .command({
-    command: 'format [file]',
-    describe: 'Format a resume.',
+    command: 'export [file]',
+    describe: 'Export a resume.',
     builder: args =>
       args
         .option('theme', {
@@ -41,7 +34,7 @@ yargs
           requiresArg: true,
           type: 'string',
         }),
-    handler: execFormat,
+    handler: execExport,
   })
   .command({
     command: 'validate [file]',
