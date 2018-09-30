@@ -12,7 +12,7 @@ import { error, readFile, writeFile } from './util';
 /**
  * The default theme to use.
  */
-const DEFAULT_THEME = 'flat';
+const DEFAULT_THEME = 'even';
 
 /**
  * The prefix that should be at the start of every theme package.
@@ -45,7 +45,14 @@ export default async function exec(args: Arguments) {
   }
 
   if (isValid(resume)) {
-    const rendered = await render(resume, args.theme || DEFAULT_THEME);
+    let rendered: string;
+    try {
+      rendered = await render(resume, args.theme || DEFAULT_THEME);
+    } catch (e) {
+      console.error(error(e instanceof Error ? e.message : e));
+      process.exitCode = 1;
+      return;
+    }
     const outputFile = args.output || '-';
     return writeFile(outputFile, rendered);
   } else {
@@ -55,11 +62,24 @@ export default async function exec(args: Arguments) {
   }
 }
 
+/**
+ * Renders the given resume.
+ *
+ * @param resume the resume to render
+ * @param themeName the name of the theme module to use
+ * @returns the rendered resume
+ * @throws an error containing a message if any errors occur during rendering
+ */
 async function render(resume: JSONResume, themeName: string): Promise<string> {
   // Make sure the theme name starts with 'jsonresume-theme-'.
   if (!themeName.startsWith(THEME_PREFIX)) {
     themeName = THEME_PREFIX + themeName;
   }
-  const theme = (await import(themeName)) as Theme;
+  let theme: Theme;
+  try {
+    theme = (await import(themeName)) as Theme;
+  } catch (e) {
+    throw new Error(`Could not load theme ${themeName}: ${e}`);
+  }
   return theme.render(resume);
 }

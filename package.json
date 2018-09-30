@@ -12,7 +12,7 @@
     "test": "run-s check-style lint run-tests"
   },
   "bin": {
-    "resume": "dist/index.js"
+    "resume": "bin/resume.js"
   },
   "repository": {
     "type": "git",
@@ -54,10 +54,9 @@
     "@ianprime0509/jsonresume-schema": "0.0.1",
     "chalk": "^2.4.1",
     "inquirer": "^6.2.0",
-    "jsonresume-theme-flat": "^0.3.7",
     "yargs": "^12.0.2"
   },
   "peerDependencies": {
-    "jsonresume-theme-flat": "^0.3.7"
+    "jsonresume-theme-even": "^0.1.0"
   }
 }
