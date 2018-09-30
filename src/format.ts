@@ -10,6 +10,16 @@ import { Arguments } from 'yargs';
 import { error, readFile, writeFile } from './util';
 
 /**
+ * The default theme to use.
+ */
+const DEFAULT_THEME = 'flat';
+
+/**
+ * The prefix that should be at the start of every theme package.
+ */
+const THEME_PREFIX = 'jsonresume-theme-';
+
+/**
  * A theme for a JSON Resume.
  */
 interface Theme {
@@ -35,7 +45,7 @@ export default async function exec(args: Arguments) {
   }
 
   if (isValid(resume)) {
-    const rendered = await render(resume, args.theme || 'basic');
+    const rendered = await render(resume, args.theme || DEFAULT_THEME);
     const outputFile = args.output || '-';
     return writeFile(outputFile, rendered);
   } else {
@@ -46,6 +56,10 @@ export default async function exec(args: Arguments) {
 }
 
 async function render(resume: JSONResume, themeName: string): Promise<string> {
+  // Make sure the theme name starts with 'jsonresume-theme-'.
+  if (!themeName.startsWith(THEME_PREFIX)) {
+    themeName = THEME_PREFIX + themeName;
+  }
   const theme = (await import(themeName)) as Theme;
   return theme.render(resume);
 }

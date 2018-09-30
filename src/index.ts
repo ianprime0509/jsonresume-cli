@@ -28,12 +28,19 @@ yargs
     command: 'format [file]',
     describe: 'Format a resume.',
     builder: args =>
-      args.option('theme', {
-        alias: 't',
-        describe: 'Set the theme to use',
-        requiresArg: true,
-        type: 'string',
-      }),
+      args
+        .option('theme', {
+          alias: 't',
+          describe: 'Set the theme',
+          requiresArg: true,
+          type: 'string',
+        })
+        .option('output', {
+          alias: 'o',
+          describe: 'Set the output file',
+          requiresArg: true,
+          type: 'string',
+        }),
     handler: execFormat,
   })
   .command({

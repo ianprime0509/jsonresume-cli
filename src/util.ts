@@ -30,8 +30,11 @@ export async function readFile(file: string): Promise<string> {
  * @param contents the contents to write to the file
  */
 export async function writeFile(file: string, contents: string): Promise<void> {
-  // stdout has file descriptor 1.
-  return writeFileAsync(file === '-' ? 1 : file, contents);
+  if (file === '-') {
+    process.stdout.write(contents);
+  } else {
+    return writeFileAsync(file === '-' ? 1 : file, contents);
+  }
 }
 
 /**
