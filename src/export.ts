@@ -7,7 +7,7 @@
 import { isValid, JSONResume } from '@ianprime0509/jsonresume-schema';
 import { Arguments } from 'yargs';
 
-import { error, readFile, writeFile } from './util';
+import { error, loadTheme, readFile, Theme, writeFile } from './util';
 
 /**
  * The default theme to use.
@@ -18,13 +18,6 @@ const DEFAULT_THEME = 'even';
  * The prefix that should be at the start of every theme package.
  */
 const THEME_PREFIX = 'jsonresume-theme-';
-
-/**
- * A theme for a JSON Resume.
- */
-interface Theme {
-  render(resume: JSONResume): string;
-}
 
 /**
  * Executes the export subcommand.
@@ -77,7 +70,7 @@ async function render(resume: JSONResume, themeName: string): Promise<string> {
   }
   let theme: Theme;
   try {
-    theme = (await import(themeName)) as Theme;
+    theme = await loadTheme(themeName);
   } catch (e) {
     throw new Error(`Could not load theme ${themeName}: ${e}`);
   }

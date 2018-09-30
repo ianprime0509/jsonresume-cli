@@ -4,12 +4,58 @@
  * @copyright 2018 Ian Johnson
  * @license MIT
  */
+import { JSONResume } from '@ianprime0509/jsonresume-schema';
 import chalk from 'chalk';
+import { exec } from 'child_process';
 import { readFile as readFileNode, writeFile as writeFileNode } from 'fs';
+import { join } from 'path';
 import { promisify } from 'util';
 
+const execAsync = promisify(exec);
 const readFileAsync = promisify(readFileNode);
 const writeFileAsync = promisify(writeFileNode);
+
+/**
+ * A theme for a JSON Resume.
+ */
+export interface Theme {
+  render(resume: JSONResume): string;
+}
+
+/**
+ * Renders an error message to be printed to the console.
+ */
+export const error = chalk.bold.red;
+
+/**
+ * Loads a theme from the Node module with the given name.
+ *
+ * @param moduleName the complete name of the theme module to load (e.g.
+ * 'jsonresume-theme-even')
+ */
+export async function loadTheme(moduleName: string): Promise<Theme> {
+  let theme: any;
+
+  // Try to load the module normally.
+  try {
+    theme = await import(moduleName);
+  } catch (_) {
+    // That failed; try to work around NODE_PATH not being set and try to find
+    // global modules.
+    try {
+      const { stdout: npmRoot } = await execAsync('npm root -g');
+      theme = await import(join(npmRoot, moduleName));
+    } catch (e) {
+      throw new Error(`Unable to load module ${moduleName}: ${e}`);
+    }
+  }
+
+  // Ensure that the module that was loaded is actually a theme.
+  if (!theme || !('render' in theme) || !(typeof theme.render === 'function')) {
+    throw new Error(`${moduleName} is not a theme module.`);
+  }
+  return theme as Theme;
+}
 
 /**
  * Reads the contents of the given file asynchronously.
@@ -36,8 +82,3 @@ export async function writeFile(file: string, contents: string): Promise<void> {
     return writeFileAsync(file === '-' ? 1 : file, contents);
   }
 }
-
-/**
- * Renders an error message to be printed to the console.
- */
-export const error = chalk.bold.red;
