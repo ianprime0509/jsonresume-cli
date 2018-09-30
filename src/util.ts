@@ -4,6 +4,7 @@
  * @copyright 2018 Ian Johnson
  * @license MIT
  */
+import chalk from 'chalk';
 import { readFile as readFileNode, writeFile as writeFileNode } from 'fs';
 import { promisify } from 'util';
 
@@ -32,3 +33,8 @@ export async function writeFile(file: string, contents: string): Promise<void> {
   // stdout has file descriptor 1.
   return writeFileAsync(file === '-' ? 1 : file, contents);
 }
+
+/**
+ * Renders an error message to be printed to the console.
+ */
+export const error = chalk.bold.red;

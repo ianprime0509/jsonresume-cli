@@ -9,7 +9,7 @@
     "lint": "tslint -p tsconfig.json",
     "prepare": "run-s build",
     "run-tests": "mocha -r ts-node/register src/**/*.spec.ts",
-    "test": "run-s check-style lint"
+    "test": "run-s check-style lint run-tests"
   },
   "bin": {
     "resume": "dist/index.js"

@@ -40,4 +40,5 @@ yargs
     command: 'validate [file]',
     describe: 'Validate a resume.',
     handler: execValidate,
-  }).argv;
+  })
+  .strict().argv;

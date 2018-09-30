@@ -38,6 +38,7 @@ describe('validate', () => {
 
     await execValidate({ _: [], $0: 'validateTest' });
     expect(process.exitCode).to.equal(0);
+    expect(fakeReadFile).to.have.been.calledOnceWith('-');
   });
 
   it('fails to validate an invalid resume', async () => {
@@ -46,5 +47,6 @@ describe('validate', () => {
 
     await execValidate({ _: [], $0: 'validateTest' });
     expect(process.exitCode).to.equal(1);
+    expect(fakeReadFile).to.have.been.calledOnceWith('-');
   });
 });
