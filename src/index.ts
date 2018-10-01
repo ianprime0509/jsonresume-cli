@@ -15,6 +15,12 @@ yargs
   .command({
     command: 'new [file]',
     describe: 'Create a new resume.',
+    builder: args =>
+      args.option('force', {
+        alias: 'f',
+        describe: 'Create the output file, even if it already exists',
+        type: 'boolean',
+      }),
     handler: execNew,
   })
   .command({

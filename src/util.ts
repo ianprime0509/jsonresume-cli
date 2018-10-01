@@ -68,11 +68,18 @@ export async function readFile(file: string): Promise<string> {
  *
  * @param file the path of the file to write, or '-' to write to stdout
  * @param contents the contents to write to the file
+ * @param overwrite whether to overwrite the file if it already exists
  */
-export async function writeFile(file: string, contents: string): Promise<void> {
+export async function writeFile(
+  file: string,
+  contents: string,
+  overwrite: boolean = false,
+): Promise<void> {
   if (file === '-') {
     process.stdout.write(contents);
   } else {
-    return writeFileAsync(file === '-' ? 1 : file, contents);
+    return writeFileAsync(file === '-' ? 1 : file, contents, {
+      flag: overwrite ? 'w' : 'wx',
+    });
   }
 }
