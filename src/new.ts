@@ -6,6 +6,8 @@
  */
 import { Arguments } from 'yargs';
 
+import { log } from './log';
+
 /**
  * Executes the new subcommand.
  *
@@ -13,5 +15,5 @@ import { Arguments } from 'yargs';
  */
 export default async function exec(args: Arguments) {
   const file = args.file || '-';
-  console.log(`Output to ${file}`);
+  log('info', `Output to ${file}`);
 }

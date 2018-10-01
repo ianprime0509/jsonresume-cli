@@ -5,7 +5,6 @@
  * @license MIT
  */
 import { JSONResume } from '@ianprime0509/jsonresume-schema';
-import chalk from 'chalk';
 import { exec } from 'child_process';
 import { readFile as readFileNode, writeFile as writeFileNode } from 'fs';
 import { join } from 'path';
@@ -21,11 +20,6 @@ const writeFileAsync = promisify(writeFileNode);
 export interface Theme {
   render(resume: JSONResume): string;
 }
-
-/**
- * Renders an error message to be printed to the console.
- */
-export const error = chalk.bold.red;
 
 /**
  * Loads a theme from the Node module with the given name.
