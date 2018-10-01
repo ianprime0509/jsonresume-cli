@@ -11,6 +11,7 @@ import * as sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 
 import execExport from './export';
+import * as log from './log';
 import * as util from './util';
 
 import completeJson from '@ianprime0509/jsonresume-schema/examples/valid/complete.json';
@@ -21,6 +22,14 @@ chai.use(sinonChai);
 
 describe('export', () => {
   let oldExitCode: number;
+
+  before(() => {
+    log.mute();
+  });
+
+  after(() => {
+    log.unmute();
+  });
 
   beforeEach(() => {
     oldExitCode = process.exitCode;

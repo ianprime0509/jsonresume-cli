@@ -10,6 +10,7 @@ import 'mocha';
 import * as sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 
+import * as log from './log';
 import * as util from './util';
 import execValidate from './validate';
 
@@ -21,6 +22,14 @@ chai.use(sinonChai);
 
 describe('validate', () => {
   let oldExitCode: number;
+
+  before(() => {
+    log.mute();
+  });
+
+  after(() => {
+    log.unmute();
+  });
 
   beforeEach(() => {
     oldExitCode = process.exitCode;

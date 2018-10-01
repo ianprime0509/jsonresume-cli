@@ -27,3 +27,17 @@ export function log(level: string, message: string) {
 export function error(message: string) {
   log('error', message);
 }
+
+/**
+ * Mutes all logging output.
+ */
+export function mute() {
+  logger.silent = true;
+}
+
+/**
+ * Unmutes all logging output.
+ */
+export function unmute() {
+  logger.silent = false;
+}
