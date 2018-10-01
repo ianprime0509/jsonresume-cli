@@ -21,7 +21,7 @@ import basicsWrongType from '@ianprime0509/jsonresume-schema/examples/invalid/ba
 
 chai.use(sinonChai);
 
-describe('validate', () => {
+describe('validate subcommand', () => {
   let oldExitCode: number;
 
   before(() => {
