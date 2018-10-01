@@ -24,7 +24,7 @@ export function log(level: string, message: string) {
 /**
  * A shortcut for `log('error', message)`.
  */
-export function error(message: string) {
+export function logError(message: string) {
   log('error', message);
 }
 

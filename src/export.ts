@@ -7,7 +7,7 @@
 import { isValid, JSONResume } from '@ianprime0509/jsonresume-schema';
 import { Arguments } from 'yargs';
 
-import { error } from './log';
+import { logError } from './log';
 import { loadTheme, readFile, Theme, writeFile } from './util';
 
 /**
@@ -32,7 +32,7 @@ export default async function exec(args: Arguments) {
     resume = JSON.parse(await readFile(inputFile));
   } catch (e) {
     if (e instanceof SyntaxError) {
-      error(`Invalid JSON: ${e.message}`);
+      logError(`Invalid JSON: ${e.message}`);
     }
     process.exitCode = 1;
     return;
@@ -43,7 +43,7 @@ export default async function exec(args: Arguments) {
     try {
       rendered = await render(resume, args.theme || DEFAULT_THEME);
     } catch (e) {
-      error(e instanceof Error ? e.message : e);
+      logError(e instanceof Error ? e.message : e);
       process.exitCode = 1;
       return;
     }
@@ -51,7 +51,7 @@ export default async function exec(args: Arguments) {
     return writeFile(outputFile, rendered);
   } else {
     // TODO: show validation errors.
-    error('Invalid resume input.');
+    logError('Invalid resume input.');
     process.exitCode = 1;
   }
 }
