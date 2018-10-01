@@ -4,9 +4,10 @@
  * @copyright 2018 Ian Johnson
  * @license MIT
  */
-import { isValid } from '@ianprime0509/jsonresume-schema';
+import { validate } from '@ianprime0509/jsonresume-schema';
 import { Arguments } from 'yargs';
 
+import { logError } from './log';
 import { readFile } from './util';
 
 /**
@@ -18,8 +19,9 @@ export default async function exec(args: Arguments) {
   const inputFile = args.file || '-';
   const resume = JSON.parse(await readFile(inputFile));
 
-  if (!isValid(resume)) {
-    // TODO: output validation errors.
+  const errors = validate(resume);
+  if (errors) {
+    errors.forEach(logError);
     process.exitCode = 1;
   }
 }

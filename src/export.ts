@@ -4,7 +4,7 @@
  * @copyright 2018 Ian Johnson
  * @license MIT
  */
-import { isValid, JSONResume } from '@ianprime0509/jsonresume-schema';
+import { isValid, JSONResume, validate } from '@ianprime0509/jsonresume-schema';
 import { Arguments } from 'yargs';
 
 import { logError } from './log';
@@ -38,7 +38,8 @@ export default async function exec(args: Arguments) {
     return;
   }
 
-  if (isValid(resume)) {
+  const errors = validate(resume);
+  if (!errors) {
     let rendered: string;
     try {
       rendered = await render(resume, args.theme || DEFAULT_THEME);
@@ -50,8 +51,8 @@ export default async function exec(args: Arguments) {
     const outputFile = args.output || '-';
     return writeFile(outputFile, rendered);
   } else {
-    // TODO: show validation errors.
-    logError('Invalid resume input.');
+    logError('Invalid resume input:');
+    errors.forEach(logError);
     process.exitCode = 1;
   }
 }
