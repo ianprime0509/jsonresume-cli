@@ -4,7 +4,7 @@
   "description": "A CLI for creating and formatting JSON resumes.",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -p tsconfig.app.json",
     "check-style": "prettier -l src/**/*.ts",
     "lint": "tslint -p tsconfig.json",
     "prepare": "run-s build",
