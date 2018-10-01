@@ -20,7 +20,7 @@ export default async function exec(args: Arguments) {
   const resume = JSON.parse(await readFile(inputFile));
 
   const errors = validate(resume);
-  if (errors) {
+  if (errors.length !== 0) {
     errors.forEach(logError);
     process.exitCode = 1;
   }

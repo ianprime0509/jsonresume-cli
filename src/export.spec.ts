@@ -4,6 +4,7 @@
  * @copyright 2018 Ian Johnson
  * @license MIT
  */
+import { validate } from '@ianprime0509/jsonresume-schema';
 import * as chai from 'chai';
 import { expect } from 'chai';
 import 'mocha';
@@ -20,7 +21,7 @@ import basicsWrongType from '@ianprime0509/jsonresume-schema/examples/invalid/ba
 
 chai.use(sinonChai);
 
-describe('export', () => {
+describe('export subcommand', () => {
   let oldExitCode: number;
 
   before(() => {
@@ -41,32 +42,63 @@ describe('export', () => {
     sinon.restore();
   });
 
-  it('should export a valid resume successfully', async () => {
-    const fakeReadFile = sinon.fake.resolves(JSON.stringify(completeJson));
-    sinon.replace(util, 'readFile', fakeReadFile);
-    const fakeWriteFile = sinon.fake();
-    sinon.replace(util, 'writeFile', fakeWriteFile);
-
-    // Make sure the theme is being used correctly.
+  context('with a valid resume', () => {
+    let fakeReadFile: sinon.SinonSpy;
+    let fakeWriteFile: sinon.SinonSpy;
+    let fakeLoadTheme: sinon.SinonSpy;
     const rendered = 'rendered';
-    const fakeLoadTheme = sinon.fake.resolves({ render: () => rendered });
-    sinon.replace(util, 'loadTheme', fakeLoadTheme);
 
-    await execExport({ _: [], $0: 'testExport' });
-    expect(process.exitCode).to.equal(0);
-    expect(fakeReadFile).to.have.been.calledOnceWith('-');
-    expect(fakeWriteFile).to.have.been.calledOnceWith('-', rendered);
+    beforeEach(() => {
+      fakeReadFile = sinon.fake.resolves(JSON.stringify(completeJson));
+      sinon.replace(util, 'readFile', fakeReadFile);
+      fakeWriteFile = sinon.fake();
+      sinon.replace(util, 'writeFile', fakeWriteFile);
+      fakeLoadTheme = sinon.fake.resolves({ render: () => rendered });
+      sinon.replace(util, 'loadTheme', fakeLoadTheme);
+    });
+
+    it('sets the status code to 0', async () => {
+      await execExport({ _: [], $0: 'testExport' });
+      expect(process.exitCode).to.equal(0);
+    });
+
+    it('writes the rendered resume to the output file', async () => {
+      await execExport({ _: [], $0: 'testExport' });
+      expect(fakeWriteFile).to.have.been.calledOnceWith('-', rendered);
+    });
   });
 
-  it('should fail to export an invalid resume', async () => {
-    const fakeReadFile = sinon.fake.resolves(JSON.stringify(basicsWrongType));
-    sinon.replace(util, 'readFile', fakeReadFile);
-    const fakeWriteFile = sinon.fake();
-    sinon.replace(util, 'writeFile', fakeWriteFile);
+  context('with an invalid resume', () => {
+    let fakeReadFile: sinon.SinonSpy;
+    let fakeWriteFile: sinon.SinonSpy;
+    let fakeLogError: sinon.SinonSpy;
 
-    await execExport({ _: [], $0: 'testExport' });
-    expect(process.exitCode).to.equal(1);
-    expect(fakeReadFile).to.have.been.calledOnceWith('-');
-    expect(fakeWriteFile).not.to.have.been.called;
+    beforeEach(() => {
+      fakeReadFile = sinon.fake.resolves(JSON.stringify(basicsWrongType));
+      sinon.replace(util, 'readFile', fakeReadFile);
+      fakeWriteFile = sinon.fake();
+      sinon.replace(util, 'writeFile', fakeWriteFile);
+      fakeLogError = sinon.fake();
+      sinon.replace(log, 'logError', fakeLogError);
+    });
+
+    it('sets the status code to 1', async () => {
+      await execExport({ _: [], $0: 'testExport' });
+      expect(process.exitCode).to.equal(1);
+    });
+
+    it('does not write anything to the output file', async () => {
+      await execExport({ _: [], $0: 'testExport' });
+      expect(fakeWriteFile).not.to.have.been.called;
+    });
+
+    it('logs validation errors', async () => {
+      // Collect expected validation errors.
+      const errors = validate(basicsWrongType);
+
+      await execExport({ _: [], $0: 'testExport' });
+      expect(fakeLogError).to.have.been.called;
+      errors.forEach(e => expect(fakeLogError).to.have.been.calledWith(e));
+    });
   });
 });

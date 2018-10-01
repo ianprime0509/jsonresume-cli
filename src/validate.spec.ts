@@ -4,6 +4,7 @@
  * @copyright 2018 Ian Johnson
  * @license MIT
  */
+import { validate } from '@ianprime0509/jsonresume-schema';
 import * as chai from 'chai';
 import { expect } from 'chai';
 import 'mocha';
@@ -41,21 +42,43 @@ describe('validate', () => {
     sinon.restore();
   });
 
-  it('validates a complete resume', async () => {
-    const fakeReadFile = sinon.fake.resolves(JSON.stringify(completeJson));
-    sinon.replace(util, 'readFile', fakeReadFile);
+  context('with a valid resume', () => {
+    let fakeReadFile: sinon.SinonSpy;
 
-    await execValidate({ _: [], $0: 'validateTest' });
-    expect(process.exitCode).to.equal(0);
-    expect(fakeReadFile).to.have.been.calledOnceWith('-');
+    beforeEach(() => {
+      fakeReadFile = sinon.fake.resolves(JSON.stringify(completeJson));
+      sinon.replace(util, 'readFile', fakeReadFile);
+    });
+
+    it('sets the status code to 0', async () => {
+      await execValidate({ _: [], $0: 'validateTest' });
+      expect(process.exitCode).to.equal(0);
+    });
   });
 
-  it('fails to validate an invalid resume', async () => {
-    const fakeReadFile = sinon.fake.resolves(JSON.stringify(basicsWrongType));
-    sinon.replace(util, 'readFile', fakeReadFile);
+  context('with an invalid resume', () => {
+    let fakeReadFile: sinon.SinonSpy;
+    let fakeLogError: sinon.SinonSpy;
 
-    await execValidate({ _: [], $0: 'validateTest' });
-    expect(process.exitCode).to.equal(1);
-    expect(fakeReadFile).to.have.been.calledOnceWith('-');
+    beforeEach(() => {
+      fakeReadFile = sinon.fake.resolves(JSON.stringify(basicsWrongType));
+      sinon.replace(util, 'readFile', fakeReadFile);
+      fakeLogError = sinon.fake();
+      sinon.replace(log, 'logError', fakeLogError);
+    });
+
+    it('sets the status code to 1', async () => {
+      await execValidate({ _: [], $0: 'validateTest' });
+      expect(process.exitCode).to.equal(1);
+    });
+
+    it('logs validation errors', async () => {
+      // Collect expected validation errors.
+      const errors = validate(basicsWrongType);
+
+      await execValidate({ _: [], $0: 'validateTest' });
+      expect(fakeLogError).to.have.been.called;
+      errors.forEach(e => expect(fakeLogError).to.have.been.calledWith(e));
+    });
   });
 });

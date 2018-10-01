@@ -39,7 +39,7 @@ export default async function exec(args: Arguments) {
   }
 
   const errors = validate(resume);
-  if (!errors) {
+  if (errors.length === 0) {
     let rendered: string;
     try {
       rendered = await render(resume, args.theme || DEFAULT_THEME);
