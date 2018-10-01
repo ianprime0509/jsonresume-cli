@@ -8,7 +8,7 @@
     "check-style": "prettier -l src/**/*.ts",
     "lint": "tslint -p tsconfig.json",
     "prepare": "run-s build",
-    "run-tests": "mocha -r ts-node/register src/**/*.spec.ts",
+    "run-tests": "ts-mocha -p tsconfig.spec.json src/**/*.spec.ts",
     "test": "run-s check-style lint run-tests"
   },
   "bin": {
@@ -46,6 +46,7 @@
     "prettier": "^1.14.3",
     "sinon": "^6.3.4",
     "sinon-chai": "^3.2.0",
+    "ts-mocha": "^2.0.0",
     "ts-node": "^7.0.1",
     "tslint": "^5.11.0",
     "typescript": "^3.1.1"
