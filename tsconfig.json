@@ -1,5 +1,4 @@
 {
-  "include": ["src/**/*.ts"],
   "compilerOptions": {
     "types": ["@types/node"],
     "target": "es2015",
